@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Walentynka</title>
+	<style>
+		:root {
+			--bg-1: #05050a;
+			--bg-2: #0b0b1a;
+			--bg-3: #14081f;
+			--accent-1: #ff4d8d;
+			--accent-2: #ff1f6a;
+			--accent-3: #b84bff;
+			--text: #f7e9f1;
+			--muted: #a695b1;
+			--glass: rgba(255, 255, 255, 0.08);
+			--glass-strong: rgba(255, 255, 255, 0.16);
+			--shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+			--glow: 0 0 20px rgba(255, 77, 141, 0.4);
+		}
+
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			min-height: 100vh;
+			font-family: "Nunito", "Poppins", "Trebuchet MS", sans-serif;
+			color: var(--text);
+			background: radial-gradient(circle at 20% 20%, rgba(255, 77, 141, 0.15), transparent 40%),
+				radial-gradient(circle at 80% 10%, rgba(184, 75, 255, 0.2), transparent 35%),
+				linear-gradient(120deg, var(--bg-1), var(--bg-2), var(--bg-3));
+			background-size: 200% 200%;
+			overflow-x: hidden;
+			overflow-y: auto;
+			display: block;
+			transition: background 1.2s ease;
+			animation: ambientShift 18s ease infinite;
+		}
+
+		body::before,
+		body::after {
+			content: "";
+			position: fixed;
+			inset: -30% 0 0 0;
+			background: radial-gradient(circle at 30% 30%, rgba(255, 77, 141, 0.18), transparent 55%),
+				radial-gradient(circle at 70% 40%, rgba(184, 75, 255, 0.22), transparent 60%);
+			filter: blur(80px);
+			z-index: -2;
+			animation: drift 18s ease-in-out infinite alternate;
+		}
+
+		body::after {
+			inset: 0 -30% -20% 0;
+			animation-duration: 22s;
+			opacity: 0.8;
+		}
+
+		@keyframes drift {
+			0% {
+				transform: translate3d(-6%, -4%, 0) scale(1);
+			}
+			100% {
+				transform: translate3d(6%, 4%, 0) scale(1.1);
+			}
+		}
+
+		@keyframes ambientShift {
+			0% {
+				background-position: 0% 50%;
+			}
+			50% {
+				background-position: 100% 50%;
+			}
+			100% {
+				background-position: 0% 50%;
+			}
+		}
+
+		.background-grid {
+			position: fixed;
+			inset: 0;
+			background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+			background-size: 90px 90px;
+			opacity: 0.2;
+			pointer-events: none;
+			z-index: -1;
+			animation: gridMove 14s linear infinite;
+		}
+
+		@keyframes gridMove {
+			0% {
+				transform: translateY(0);
+			}
+			100% {
+				transform: translateY(60px);
+			}
+		}
+
+		.content {
+			opacity: 1;
+			pointer-events: all;
+			transform: translateY(0) scale(1);
+			text-align: center;
+			padding: 0 10vw 10vh;
+			max-width: 1100px;
+			margin: 0 auto;
+			z-index: 2;
+			transition: opacity 0.8s ease, transform 0.8s ease;
+		}
+
+		.content.hidden-content {
+			opacity: 0;
+			pointer-events: none;
+			transform: translateY(20px) scale(0.98);
+		}
+
+		.hero-title {
+			font-size: clamp(2.2rem, 4vw, 4rem);
+			margin-bottom: 16px;
+			text-shadow: 0 0 24px rgba(255, 77, 141, 0.5);
+			animation: fadeInUp 1.2s ease;
+		}
+
+		.hero-subtitle {
+			font-size: clamp(1rem, 1.6vw, 1.3rem);
+			color: var(--muted);
+			margin-bottom: 40px;
+			animation: fadeInUp 1.4s ease;
+		}
+
+		.hero-kicker {
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+			padding: 8px 18px;
+			border-radius: 999px;
+			margin-bottom: 18px;
+			background: rgba(255, 255, 255, 0.08);
+			border: 1px solid rgba(255, 255, 255, 0.12);
+			text-transform: uppercase;
+			letter-spacing: 2px;
+			font-size: 0.75rem;
+			color: var(--muted);
+			box-shadow: inset 0 0 20px rgba(255, 77, 141, 0.2);
+			animation: fadeInUp 1s ease;
+		}
+
+		.final-section {
+			margin-top: 70px;
+			padding: 40px 0 20px;
+		}
+
+		.final-hearts {
+			margin-top: 18px;
+			display: flex;
+			justify-content: center;
+			gap: 10px;
+			font-size: clamp(1.2rem, 2vw, 1.8rem);
+			color: var(--accent-1);
+			text-shadow: 0 0 16px rgba(255, 77, 141, 0.55);
+			animation: fadeInUp 1.2s ease;
+		}
+
+		.game-panel {
+			padding: 24px;
+			border-radius: 18px;
+			background: rgba(255, 255, 255, 0.06);
+			border: 1px solid rgba(255, 255, 255, 0.12);
+			box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35);
+			display: grid;
+			gap: 16px;
+			transition: max-height 0.6s ease, opacity 0.5s ease, transform 0.5s ease, margin 0.5s ease,
+				padding 0.5s ease, border-color 0.4s ease;
+			overflow: hidden;
+			max-height: 1200px;
+		}
+
+		.game-panel + .game-panel {
+			margin-top: 18px;
+		}
+
+		.game-panel.collapsed {
+			max-height: 0;
+			opacity: 0;
+			transform: translateY(-8px) scale(0.98);
+			margin-top: 0;
+			padding: 0 24px;
+			border-color: transparent;
+			pointer-events: none;
+		}
+
+		.game-header {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+		}
+
+		.game-title {
+			font-size: 1.1rem;
+			font-weight: 700;
+		}
+
+		.game-actions {
+			display: flex;
+			gap: 10px;
+		}
+
+		.game-stats {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 12px;
+			justify-content: center;
+			color: var(--muted);
+			font-size: 0.95rem;
+		}
+
+		.game-stats span {
+			color: var(--text);
+			font-weight: 700;
+		}
+
+		.game-board {
+			position: relative;
+			height: 260px;
+			border-radius: 16px;
+			background: linear-gradient(135deg, rgba(255, 77, 141, 0.12), rgba(184, 75, 255, 0.1));
+			border: 1px solid rgba(255, 255, 255, 0.12);
+			overflow: hidden;
+		}
+
+		#memory-board {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 12px;
+			padding: 12px;
+			height: auto;
+		}
+
+		#memory-board .game-btn {
+			width: 100%;
+			justify-self: stretch;
+			font-size: 1.1rem;
+			min-height: 64px;
+			background: rgba(255, 255, 255, 0.16);
+			color: var(--text);
+			font-weight: 700;
+			text-shadow: 0 0 12px rgba(255, 77, 141, 0.35);
+			box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+			text-transform: none;
+			transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+		}
+
+		#memory-board .game-btn.memory-active {
+			background: linear-gradient(135deg, rgba(255, 77, 141, 0.8), rgba(184, 75, 255, 0.8));
+			color: #100713;
+			box-shadow: 0 0 18px rgba(255, 77, 141, 0.6);
+			transform: translateY(-2px) scale(1.02);
+		}
+
+		.game-heart {
+			position: absolute;
+			width: 26px;
+			height: 26px;
+			background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
+			transform: rotate(45deg);
+			box-shadow: 0 0 12px rgba(255, 77, 141, 0.6);
+			animation: gamePop 2.2s ease forwards;
+			cursor: pointer;
+			border: none;
+		}
+
+		.game-heart::before,
+		.game-heart::after {
+			content: "";
+			position: absolute;
+			width: 26px;
+			height: 26px;
+			border-radius: 50%;
+			background: inherit;
+		}
+
+		.game-heart::before {
+			top: -13px;
+			left: 0;
+		}
+
+		.game-heart::after {
+			left: -13px;
+			top: 0;
+		}
+
+		.game-btn {
+			justify-self: center;
+			padding: 12px 22px;
+			border-radius: 999px;
+			background: linear-gradient(135deg, rgba(255, 77, 141, 0.9), rgba(184, 75, 255, 0.9));
+			border: none;
+			color: #0b0616;
+			font-weight: 700;
+			letter-spacing: 1px;
+			text-transform: uppercase;
+			cursor: pointer;
+			box-shadow: 0 0 24px rgba(255, 77, 141, 0.5);
+			transition: transform 0.3s ease, box-shadow 0.3s ease;
+		}
+
+		.game-btn:hover {
+			transform: translateY(-2px) scale(1.02);
+			box-shadow: 0 0 36px rgba(255, 77, 141, 0.7);
+		}
+
+		.game-status {
+			color: var(--muted);
+			font-size: 0.95rem;
+		}
+
+		.double-board {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+			gap: 12px;
+		}
+
+		.double-card {
+			position: relative;
+			width: 100%;
+			min-height: 90px;
+			border: none;
+			background: transparent;
+			perspective: 900px;
+			cursor: pointer;
+		}
+
+		.double-card:disabled {
+			cursor: not-allowed;
+		}
+
+		.double-inner {
+			position: absolute;
+			inset: 0;
+			transform-style: preserve-3d;
+			transition: transform 0.5s ease;
+		}
+
+		.double-card.flipped .double-inner,
+		.double-card.matched .double-inner {
+			transform: rotateY(180deg);
+		}
+
+		.double-face {
+			position: absolute;
+			inset: 0;
+			display: grid;
+			place-items: center;
+			border-radius: 16px;
+			backface-visibility: hidden;
+			font-size: 1.4rem;
+			font-weight: 700;
+			box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+		}
+
+		.double-front {
+			background: linear-gradient(135deg, rgba(255, 77, 141, 0.9), rgba(184, 75, 255, 0.85));
+			color: #14071d;
+			text-transform: uppercase;
+		}
+
+		.double-back {
+			background: rgba(255, 255, 255, 0.12);
+			border: 1px solid rgba(255, 255, 255, 0.18);
+			color: var(--text);
+			transform: rotateY(180deg);
+			text-shadow: 0 0 10px rgba(255, 77, 141, 0.35);
+		}
+
+		.games-section {
+			margin-top: 50px;
+			padding-bottom: 60px;
+		}
+
+		.games-toggle {
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+			padding: 14px 28px;
+			border-radius: 999px;
+			background: linear-gradient(135deg, rgba(255, 77, 141, 0.9), rgba(184, 75, 255, 0.9));
+			box-shadow: 0 0 30px rgba(255, 77, 141, 0.5);
+			color: #0b0616;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+			border: none;
+			cursor: pointer;
+			transition: transform 0.3s ease, box-shadow 0.3s ease;
+			margin-top: 24px;
+		}
+
+		.games-toggle:disabled {
+			cursor: not-allowed;
+			opacity: 0.6;
+			box-shadow: none;
+		}
+
+		.games-toggle:hover {
+			transform: translateY(-2px) scale(1.02);
+			box-shadow: 0 0 40px rgba(255, 77, 141, 0.7);
+		}
+
+		.games-list {
+			max-height: 0;
+			overflow: hidden;
+			transition: max-height 0.6s ease;
+			margin-top: 0;
+		}
+
+		.games-list.open {
+			max-height: 2000px;
+			margin-top: 24px;
+		}
+
+		.games-lock {
+			margin-top: 24px;
+			padding: 20px;
+			border-radius: 18px;
+			background: rgba(255, 255, 255, 0.06);
+			border: 1px solid rgba(255, 255, 255, 0.12);
+			box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35);
+			display: grid;
+			gap: 12px;
+		}
+
+		.games-lock.hidden {
+			display: none;
+		}
+
+		.lock-title {
+			font-size: 1.1rem;
+			font-weight: 700;
+		}
+
+		.lock-countdown {
+			font-size: 1.4rem;
+			color: var(--accent-1);
+			text-shadow: 0 0 14px rgba(255, 77, 141, 0.45);
+		}
+
+		.lock-input {
+			width: min(320px, 100%);
+			margin: 0 auto;
+			padding: 10px 14px;
+			border-radius: 12px;
+			border: 1px solid rgba(255, 255, 255, 0.2);
+			background: rgba(8, 5, 14, 0.6);
+			color: var(--text);
+			text-align: center;
+			font-size: 1rem;
+		}
+
+		.lock-button {
+			justify-self: center;
+			padding: 10px 20px;
+			border-radius: 999px;
+			border: none;
+			background: linear-gradient(135deg, rgba(255, 77, 141, 0.9), rgba(184, 75, 255, 0.9));
+			color: #0b0616;
+			font-weight: 700;
+			letter-spacing: 1px;
+			text-transform: uppercase;
+			cursor: pointer;
+			box-shadow: 0 0 20px rgba(255, 77, 141, 0.45);
+			transition: transform 0.3s ease, box-shadow 0.3s ease;
+		}
+
+		.lock-button:hover {
+			transform: translateY(-2px) scale(1.02);
+			box-shadow: 0 0 30px rgba(255, 77, 141, 0.65);
+		}
+
+		.lock-note {
+			color: var(--muted);
+			font-size: 0.95rem;
+		}
+
+		.games-picker {
+			display: grid;
+			gap: 12px;
+			margin-bottom: 18px;
+		}
+
+		.game-choice {
+			width: 100%;
+			padding: 14px 18px;
+			border-radius: 16px;
+			background: rgba(255, 255, 255, 0.08);
+			border: 1px solid rgba(255, 255, 255, 0.12);
+			color: var(--text);
+			text-align: left;
+			cursor: pointer;
+			transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+		}
+
+		.game-choice:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 0 22px rgba(255, 77, 141, 0.35);
+		}
+
+		.game-choice.active {
+			background: linear-gradient(135deg, rgba(255, 77, 141, 0.85), rgba(184, 75, 255, 0.9));
+			color: #100713;
+			box-shadow: 0 0 26px rgba(255, 77, 141, 0.6);
+		}
+
+		.modal-backdrop {
+			position: fixed;
+			inset: 0;
+			background: rgba(5, 5, 10, 0.75);
+			backdrop-filter: blur(8px);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 10;
+			opacity: 1;
+			transition: opacity 0.6s ease;
+		}
+
+		.modal-backdrop.hidden {
+			opacity: 0;
+			pointer-events: none;
+		}
+
+		.modal {
+			width: min(520px, 90vw);
+			padding: 40px 36px;
+			border-radius: 28px;
+			background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+			border: 1px solid rgba(255, 255, 255, 0.2);
+			box-shadow: var(--shadow), 0 0 40px rgba(255, 77, 141, 0.25);
+			position: relative;
+			overflow: hidden;
+			text-align: center;
+			animation: modalPop 0.9s ease;
+		}
+
+		.modal h1 {
+			font-size: 2rem;
+			line-height: 1.3;
+			margin-bottom: 18px;
+			text-shadow: 0 0 14px rgba(255, 77, 141, 0.35);
+		}
+
+		.modal p {
+			color: var(--muted);
+			margin-bottom: 26px;
+			font-size: 1rem;
+		}
+
+		.modal-buttons {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 18px;
+		}
+
+		.btn {
+			border: none;
+			padding: 14px 20px;
+			border-radius: 999px;
+			font-size: 1rem;
+			font-weight: 700;
+			letter-spacing: 1px;
+			color: #0a0412;
+			cursor: pointer;
+			transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+			position: relative;
+			overflow: hidden;
+			text-transform: uppercase;
+		}
+
+		.btn::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.7), transparent 60%);
+			opacity: 0;
+			transition: opacity 0.4s ease;
+		}
+
+		.btn:hover {
+			transform: translateY(-2px) scale(1.02);
+			box-shadow: 0 0 30px rgba(255, 77, 141, 0.5);
+		}
+
+		.btn:hover::after {
+			opacity: 1;
+		}
+
+		.btn-yes {
+			background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
+			box-shadow: 0 0 26px rgba(255, 77, 141, 0.55);
+		}
+
+		.btn-no {
+			background: linear-gradient(135deg, #444, #1f1b2d);
+			color: #c7b6d3;
+			box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+		}
+
+		.modal-note {
+			margin-top: 16px;
+			font-size: 0.95rem;
+			color: var(--muted);
+		}
+
+		.modal.shake {
+			animation: modalShake 0.5s ease;
+		}
+
+		@keyframes modalPop {
+			0% {
+				transform: translateY(30px) scale(0.92);
+				opacity: 0;
+			}
+			100% {
+				transform: translateY(0) scale(1);
+				opacity: 1;
+			}
+		}
+
+		@keyframes modalShake {
+			0% {
+				transform: translateX(0);
+			}
+			25% {
+				transform: translateX(-8px);
+			}
+			50% {
+				transform: translateX(8px);
+			}
+			75% {
+				transform: translateX(-6px);
+			}
+			100% {
+				transform: translateX(0);
+			}
+		}
+
+		@keyframes gamePop {
+			0% {
+				transform: translateY(16px) rotate(45deg) scale(0.6);
+				opacity: 0;
+			}
+			20% {
+				opacity: 1;
+			}
+			100% {
+				transform: translateY(-18px) rotate(45deg) scale(1.2);
+				opacity: 0;
+			}
+		}
+
+		@keyframes fadeInUp {
+			0% {
+				opacity: 0;
+				transform: translateY(20px);
+			}
+			100% {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		@media (max-width: 720px) {
+			.content {
+				padding: 0 8vw;
+			}
+
+			.game-header {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="background-grid"></div>
+
+	<div class="modal-backdrop" id="question-modal">
+		<div class="modal" id="question-card">
+			<h1>Zostaniesz moją Walentynką? ❤️</h1>
+			<p id="modal-subtitle">To bardzo ważne pytanie 🥺</p>
+			<div class="modal-buttons">
+				<button class="btn btn-yes" id="yes-btn">TAK ❤️</button>
+				<button class="btn btn-no" id="no-btn">NIE 💔</button>
+			</div>
+			<div class="modal-note" id="modal-note"></div>
+		</div>
+	</div>
+
+	<main class="content hidden-content" id="main-content">
+		<section class="final-section">
+			<h2 class="hero-title">Zostajesz moją Walentynką</h2>
+			<div class="final-hearts">💗 💗 💗 💗 💗</div>
+			<p class="hero-subtitle">Zagrajmy razem w mini-gry, ktore nastroja nas na idealny wieczor.</p>
+			<button class="games-toggle" id="games-toggle">Zagrajmy w gry</button>
+		</section>
+
+		<section class="games-section" id="games-section">
+			<div class="games-lock" id="games-lock">
+				<div class="lock-title">Gry beda aktywne za</div>
+				<div class="lock-countdown" id="games-countdown">--:--:--</div>
+				<div class="lock-note">Aktywne 14 lutego od 00:00 do 23:59.</div>
+				<input class="lock-input" id="admin-code" type="password" inputmode="numeric" placeholder="Kod admina" />
+				<button class="lock-button" id="admin-unlock">Odblokuj</button>
+				<div class="lock-note" id="admin-status">Wpisz kod, aby odblokowac wczesniej.</div>
+			</div>
+			<div class="games-list" id="games-list">
+				<div class="games-picker" id="games-picker">
+					<button class="game-choice" data-game-target="hearts">Zlap serca - szybkie klikniecia</button>
+					<button class="game-choice" data-game-target="tap">Szybkie tapniecie - 10 sekund</button>
+					<button class="game-choice" data-game-target="memory">Memory serc - zapamietaj sekwencje</button>
+					<button class="game-choice" data-game-target="double">Double Memory - pary kart</button>
+				</div>
+
+				<div class="game-panel collapsed" data-game="hearts" id="panel-hearts">
+					<div class="game-header">
+						<div>
+							<div class="game-title">Mini-gra: Złap serca</div>
+							<div class="game-status">Klikaj pojawiające się serduszka i zbierz jak najwięcej punktów.</div>
+						</div>
+						<div class="game-actions">
+							<button class="game-btn" id="game-start">Start</button>
+							<button class="game-btn" data-close-game>Ukryj</button>
+						</div>
+					</div>
+					<div class="game-stats">
+						Punkty: <span id="game-score">0</span>
+						Czas: <span id="game-time">20</span>s
+						Rekord: <span id="game-best">0</span>
+					</div>
+					<div class="game-board" id="game-board"></div>
+					<div class="game-status" id="game-status">Gotowa? Kliknij start i poluj na glow.</div>
+				</div>
+
+				<div class="game-panel collapsed" data-game="tap" id="panel-tap">
+					<div class="game-header">
+						<div>
+							<div class="game-title">Mini-gra: Szybkie tapniecie</div>
+							<div class="game-status">Klikaj przycisk jak najwiecej razy w 10 sekund.</div>
+						</div>
+						<div class="game-actions">
+							<button class="game-btn" id="tap-start">Start</button>
+							<button class="game-btn" data-close-game>Ukryj</button>
+						</div>
+					</div>
+					<div class="game-stats">
+						Wynik: <span id="tap-score">0</span>
+						Czas: <span id="tap-time">10</span>s
+						Rekord: <span id="tap-best">0</span>
+					</div>
+					<button class="game-btn" id="tap-button" disabled>Klikaj mnie</button>
+					<div class="game-status" id="tap-status">Gotowa? Start i tempo w gore.</div>
+				</div>
+
+				<div class="game-panel collapsed" data-game="memory" id="panel-memory">
+					<div class="game-header">
+						<div>
+							<div class="game-title">Mini-gra: Memory serc</div>
+							<div class="game-status">Zapamietaj sekwencje i powtorz ja.</div>
+						</div>
+						<div class="game-actions">
+							<button class="game-btn" id="memory-start">Start</button>
+							<button class="game-btn" data-close-game>Ukryj</button>
+						</div>
+					</div>
+					<div class="game-stats">
+						Poziom: <span id="memory-level">0</span>
+						Rekord: <span id="memory-best">0</span>
+					</div>
+					<div class="game-board" id="memory-board">
+						<button class="game-btn" data-memory="0">1</button>
+						<button class="game-btn" data-memory="1">2</button>
+						<button class="game-btn" data-memory="2">3</button>
+						<button class="game-btn" data-memory="3">4</button>
+					</div>
+					<div class="game-status" id="memory-status">Kliknij start, potem powtorz sekwencje.</div>
+				</div>
+
+				<div class="game-panel collapsed" data-game="double" id="panel-double">
+					<div class="game-header">
+						<div>
+							<div class="game-title">Mini-gra: Double Memory</div>
+							<div class="game-status">Odkrywaj karty i znajdz wszystkie pary.</div>
+						</div>
+						<div class="game-actions">
+							<button class="game-btn" id="double-start">Start</button>
+							<button class="game-btn" data-close-game>Ukryj</button>
+						</div>
+					</div>
+					<div class="game-stats">
+						Ruchy: <span id="double-moves">0</span>
+						Pary: <span id="double-pairs">0</span>
+					</div>
+					<div class="double-board" id="double-board"></div>
+					<div class="game-status" id="double-status">Kliknij start, potem szukaj identycznych kart.</div>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<script>
+		const yesBtn = document.getElementById("yes-btn");
+		const noBtn = document.getElementById("no-btn");
+		const questionModal = document.getElementById("question-modal");
+		const questionCard = document.getElementById("question-card");
+		const modalSubtitle = document.getElementById("modal-subtitle");
+		const modalNote = document.getElementById("modal-note");
+		const mainContent = document.getElementById("main-content");
+		const gamesToggle = document.getElementById("games-toggle");
+		const gamesList = document.getElementById("games-list");
+		const gamesPicker = document.getElementById("games-picker");
+		const gamesLock = document.getElementById("games-lock");
+		const gamesCountdown = document.getElementById("games-countdown");
+		const adminCodeInput = document.getElementById("admin-code");
+		const adminUnlockBtn = document.getElementById("admin-unlock");
+		const adminStatus = document.getElementById("admin-status");
+		const gameStartBtn = document.getElementById("game-start");
+		const gameBoard = document.getElementById("game-board");
+		const gameScore = document.getElementById("game-score");
+		const gameTime = document.getElementById("game-time");
+		const gameBest = document.getElementById("game-best");
+		const gameStatus = document.getElementById("game-status");
+		const tapStartBtn = document.getElementById("tap-start");
+		const tapButton = document.getElementById("tap-button");
+		const tapScore = document.getElementById("tap-score");
+		const tapTime = document.getElementById("tap-time");
+		const tapBest = document.getElementById("tap-best");
+		const tapStatus = document.getElementById("tap-status");
+		const memoryStartBtn = document.getElementById("memory-start");
+		const memoryLevel = document.getElementById("memory-level");
+		const memoryBest = document.getElementById("memory-best");
+		const memoryBoard = document.getElementById("memory-board");
+		const memoryStatus = document.getElementById("memory-status");
+		const doubleStartBtn = document.getElementById("double-start");
+		const doubleBoard = document.getElementById("double-board");
+		const doubleMoves = document.getElementById("double-moves");
+		const doublePairs = document.getElementById("double-pairs");
+		const doubleStatus = document.getElementById("double-status");
+
+		let gameRunning = false;
+		let gameScoreValue = 0;
+		let gameTimeLeft = 20;
+		let bestScore = 0;
+		let spawnTimerId = null;
+		let countdownTimerId = null;
+
+		let tapRunning = false;
+		let tapScoreValue = 0;
+		let tapTimeLeft = 10;
+		let tapBestScore = 0;
+		let tapTimerId = null;
+
+		let memorySequence = [];
+		let memoryStep = 0;
+		let memoryLevelValue = 0;
+		let memoryBestValue = 0;
+		let memoryLocked = false;
+
+		let doubleFirstCard = null;
+		let doubleLock = false;
+		let doubleMoveCount = 0;
+		let doubleMatchCount = 0;
+
+		let adminUnlocked = false;
+
+		const clearGameBoard = () => {
+			while (gameBoard.firstChild) {
+				gameBoard.removeChild(gameBoard.firstChild);
+			}
+		};
+
+		const updateGameStats = () => {
+			gameScore.textContent = gameScoreValue;
+			gameTime.textContent = gameTimeLeft;
+			gameBest.textContent = bestScore;
+		};
+
+		const spawnGameHeart = () => {
+			if (!gameRunning) {
+				return;
+			}
+			const heart = document.createElement("button");
+			heart.className = "game-heart";
+			const size = 20 + Math.random() * 16;
+			const bounds = gameBoard.getBoundingClientRect();
+			const maxX = Math.max(bounds.width - size, 10);
+			const maxY = Math.max(bounds.height - size, 10);
+			heart.style.width = `${size}px`;
+			heart.style.height = `${size}px`;
+			heart.style.left = `${Math.random() * maxX}px`;
+			heart.style.top = `${Math.random() * maxY}px`;
+			heart.addEventListener("click", () => {
+				if (!gameRunning) {
+					return;
+				}
+				gameScoreValue += 1;
+				updateGameStats();
+				heart.remove();
+			});
+			gameBoard.appendChild(heart);
+			setTimeout(() => heart.remove(), 2200);
+		};
+
+		const endGame = () => {
+			gameRunning = false;
+			if (spawnTimerId) {
+				clearInterval(spawnTimerId);
+			}
+			if (countdownTimerId) {
+				clearInterval(countdownTimerId);
+			}
+			bestScore = Math.max(bestScore, gameScoreValue);
+			updateGameStats();
+			gameStatus.textContent = `Koniec! Wynik: ${gameScoreValue}. Spróbuj jeszcze raz.`;
+		};
+
+		const startGame = () => {
+			if (gameRunning) {
+				return;
+			}
+			gameRunning = true;
+			gameScoreValue = 0;
+			gameTimeLeft = 20;
+			gameStatus.textContent = "Start! Klikaj serca jak najszybciej.";
+			clearGameBoard();
+			updateGameStats();
+			spawnTimerId = setInterval(spawnGameHeart, 420);
+			countdownTimerId = setInterval(() => {
+				gameTimeLeft -= 1;
+				updateGameStats();
+				if (gameTimeLeft <= 0) {
+					endGame();
+				}
+			}, 1000);
+		};
+
+		if (gameStartBtn) {
+			gameStartBtn.addEventListener("click", startGame);
+		}
+
+		const setGamesOpen = (isOpen) => {
+			if (!gamesList || !gamesToggle) {
+				return;
+			}
+			gamesList.classList.toggle("open", isOpen);
+			gamesToggle.textContent = isOpen ? "Schowaj gry" : "Zagrajmy w gry";
+		};
+
+		const setGamesLocked = (locked) => {
+			if (!gamesToggle || !gamesLock) {
+				return;
+			}
+			gamesToggle.disabled = locked;
+			if (locked) {
+				setGamesOpen(false);
+				gamesLock.classList.remove("hidden");
+			} else {
+				gamesLock.classList.add("hidden");
+			}
+		};
+
+		const getUnlockWindow = (year) => {
+			const start = new Date(year, 1, 14, 0, 0, 0, 0);
+			const end = new Date(year, 1, 14, 23, 59, 59, 999);
+			return { start, end };
+		};
+
+		const getNextUnlockStart = () => {
+			const now = new Date();
+			const year = now.getFullYear();
+			const { start, end } = getUnlockWindow(year);
+			if (now < start) {
+				return start;
+			}
+			if (now > end) {
+				return getUnlockWindow(year + 1).start;
+			}
+			return start;
+		};
+
+		const updateCountdown = () => {
+			if (adminUnlocked) {
+				setGamesLocked(false);
+				gamesCountdown.textContent = "00:00:00";
+				adminStatus.textContent = "Kod poprawny. Gry odblokowane.";
+				return;
+			}
+			const now = new Date();
+			const { start, end } = getUnlockWindow(now.getFullYear());
+			if (now >= start && now <= end) {
+				setGamesLocked(false);
+				gamesCountdown.textContent = "00:00:00";
+				adminStatus.textContent = "Gry sa aktywne do konca dnia.";
+				return;
+			}
+			const target = getNextUnlockStart();
+			const diff = target - now;
+			const totalSeconds = Math.max(0, Math.floor(diff / 1000));
+			const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+			const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+			const seconds = String(totalSeconds % 60).padStart(2, "0");
+			gamesCountdown.textContent = `${hours}:${minutes}:${seconds}`;
+			setGamesLocked(true);
+		};
+
+		if (gamesToggle) {
+			gamesToggle.addEventListener("click", () => {
+				if (gamesToggle.disabled) {
+					return;
+				}
+				const isOpen = gamesList.classList.contains("open");
+				setGamesOpen(!isOpen);
+			});
+		}
+
+		const closeAllGames = () => {
+			document.querySelectorAll(".game-panel").forEach((panel) => {
+				panel.classList.add("collapsed");
+			});
+			document.querySelectorAll(".game-choice").forEach((choice) => {
+				choice.classList.remove("active");
+			});
+			resetDoubleGame();
+		};
+
+		const openGamePanel = (gameId) => {
+			const panel = document.querySelector(`[data-game="${gameId}"]`);
+			const choice = document.querySelector(`[data-game-target="${gameId}"]`);
+			if (!panel) {
+				return;
+			}
+			closeAllGames();
+			panel.classList.remove("collapsed");
+			if (choice) {
+				choice.classList.add("active");
+			}
+			panel.scrollIntoView({ behavior: "smooth", block: "start" });
+		};
+
+		if (gamesPicker) {
+			gamesPicker.addEventListener("click", (event) => {
+				const target = event.target.closest("[data-game-target]");
+				if (!target) {
+					return;
+				}
+				openGamePanel(target.dataset.gameTarget);
+			});
+		}
+
+		document.querySelectorAll("[data-close-game]").forEach((button) => {
+			button.addEventListener("click", () => {
+				closeAllGames();
+			});
+		});
+
+		const resetTapGame = () => {
+			tapRunning = false;
+			tapScoreValue = 0;
+			tapTimeLeft = 10;
+			tapScore.textContent = tapScoreValue;
+			tapTime.textContent = tapTimeLeft;
+			tapBest.textContent = tapBestScore;
+			tapStatus.textContent = "Gotowa? Start i tempo w gore.";
+			tapButton.disabled = true;
+		};
+
+		const endTapGame = () => {
+			tapRunning = false;
+			clearInterval(tapTimerId);
+			tapBestScore = Math.max(tapBestScore, tapScoreValue);
+			tapBest.textContent = tapBestScore;
+			tapStatus.textContent = `Koniec! Wynik: ${tapScoreValue}.`;
+			tapButton.disabled = true;
+		};
+
+		if (tapStartBtn) {
+			tapStartBtn.addEventListener("click", () => {
+				if (tapRunning) {
+					return;
+				}
+				tapRunning = true;
+				tapScoreValue = 0;
+				tapTimeLeft = 10;
+				tapScore.textContent = tapScoreValue;
+				tapTime.textContent = tapTimeLeft;
+				tapStatus.textContent = "Klikaj, klikaj!";
+				tapButton.disabled = false;
+				tapTimerId = setInterval(() => {
+					tapTimeLeft -= 1;
+					tapTime.textContent = tapTimeLeft;
+					if (tapTimeLeft <= 0) {
+						endTapGame();
+					}
+				}, 1000);
+			});
+		}
+
+		if (tapButton) {
+			tapButton.addEventListener("click", () => {
+				if (!tapRunning) {
+					return;
+				}
+				tapScoreValue += 1;
+				tapScore.textContent = tapScoreValue;
+			});
+		}
+
+		const flashMemoryButton = (index) => {
+			const button = memoryBoard.querySelector(`[data-memory="${index}"]`);
+			if (!button) {
+				return;
+			}
+			button.classList.add("memory-active");
+			setTimeout(() => button.classList.remove("memory-active"), 350);
+		};
+
+		const playMemorySequence = () => {
+			memoryLocked = true;
+			let delay = 0;
+			memorySequence.forEach((step) => {
+				delay += 500;
+				setTimeout(() => flashMemoryButton(step), delay);
+			});
+			setTimeout(() => {
+				memoryLocked = false;
+			}, delay + 400);
+		};
+
+		const startMemoryGame = () => {
+			memorySequence = [];
+			memoryStep = 0;
+			memoryLevelValue = 0;
+			memoryLevel.textContent = memoryLevelValue;
+			memoryStatus.textContent = "Zapamietaj sekwencje...";
+			nextMemoryRound();
+		};
+
+		const nextMemoryRound = () => {
+			memoryLevelValue += 1;
+			memoryLevel.textContent = memoryLevelValue;
+			memorySequence.push(Math.floor(Math.random() * 4));
+			memoryStep = 0;
+			playMemorySequence();
+		};
+
+		const failMemoryGame = () => {
+			memoryBestValue = Math.max(memoryBestValue, memoryLevelValue - 1);
+			memoryBest.textContent = memoryBestValue;
+			memoryStatus.textContent = "Ups! Sprobuj jeszcze raz.";
+			memorySequence = [];
+			memoryStep = 0;
+		};
+
+		if (memoryStartBtn) {
+			memoryStartBtn.addEventListener("click", startMemoryGame);
+		}
+
+		if (memoryBoard) {
+			memoryBoard.addEventListener("click", (event) => {
+				const button = event.target.closest("[data-memory]");
+				if (!button || memoryLocked || memorySequence.length === 0) {
+					return;
+				}
+				const choice = Number(button.dataset.memory);
+				flashMemoryButton(choice);
+				if (choice !== memorySequence[memoryStep]) {
+					failMemoryGame();
+					return;
+				}
+				memoryStep += 1;
+				if (memoryStep >= memorySequence.length) {
+					memoryStatus.textContent = "Super! Kolejny poziom.";
+					setTimeout(nextMemoryRound, 700);
+				}
+			});
+		}
+
+		const buildDoubleDeck = () => {
+			const values = ["A", "B", "C", "D", "E", "F"];
+			const deck = [...values, ...values];
+			for (let i = deck.length - 1; i > 0; i -= 1) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[deck[i], deck[j]] = [deck[j], deck[i]];
+			}
+			return deck;
+		};
+
+		const resetDoubleGame = () => {
+			doubleFirstCard = null;
+			doubleLock = false;
+			doubleMoveCount = 0;
+			doubleMatchCount = 0;
+			doubleMoves.textContent = "0";
+			doublePairs.textContent = "0";
+			doubleStatus.textContent = "Kliknij start, potem szukaj identycznych kart.";
+			if (doubleBoard) {
+				doubleBoard.innerHTML = "";
+			}
+		};
+
+		const handleDoubleCardClick = (card) => {
+			if (doubleLock || card.classList.contains("flipped") || card.classList.contains("matched")) {
+				return;
+			}
+			card.classList.add("flipped");
+			if (!doubleFirstCard) {
+				doubleFirstCard = card;
+				return;
+			}
+			doubleMoveCount += 1;
+			doubleMoves.textContent = doubleMoveCount;
+			if (doubleFirstCard.dataset.value === card.dataset.value) {
+				doubleFirstCard.classList.add("matched");
+				card.classList.add("matched");
+				doubleMatchCount += 1;
+				doublePairs.textContent = doubleMatchCount;
+				doubleFirstCard = null;
+				if (doubleMatchCount === 6) {
+					doubleStatus.textContent = "Brawo! Wszystkie pary znalezione.";
+				}
+				return;
+			}
+			doubleLock = true;
+			setTimeout(() => {
+				doubleFirstCard.classList.remove("flipped");
+				card.classList.remove("flipped");
+				doubleFirstCard = null;
+				doubleLock = false;
+			}, 650);
+		};
+
+		const startDoubleGame = () => {
+			resetDoubleGame();
+			const deck = buildDoubleDeck();
+			deck.forEach((value) => {
+				const card = document.createElement("button");
+				card.className = "double-card";
+				card.dataset.value = value;
+				card.innerHTML = `
+					<span class="double-inner">
+						<span class="double-face double-front">?</span>
+						<span class="double-face double-back">${value}</span>
+					</span>
+				`;
+				card.addEventListener("click", () => handleDoubleCardClick(card));
+				doubleBoard.appendChild(card);
+			});
+		};
+
+		if (doubleStartBtn) {
+			doubleStartBtn.addEventListener("click", startDoubleGame);
+		}
+
+		resetTapGame();
+		resetDoubleGame();
+
+		if (yesBtn) {
+			yesBtn.addEventListener("click", () => {
+				questionModal.classList.add("hidden");
+				setTimeout(() => {
+					questionModal.style.display = "none";
+					mainContent.classList.remove("hidden-content");
+					closeAllGames();
+					updateCountdown();
+				}, 500);
+			});
+		}
+
+		if (adminCodeInput) {
+			adminCodeInput.addEventListener("input", () => {
+				if (adminCodeInput.value.trim().length === 0) {
+					adminStatus.textContent = "Wpisz kod, aby odblokowac wczesniej.";
+				}
+			});
+		}
+
+		if (adminUnlockBtn) {
+			adminUnlockBtn.addEventListener("click", () => {
+				if (adminCodeInput && adminCodeInput.value.trim() === "123456") {
+					adminUnlocked = true;
+					setGamesLocked(false);
+					adminStatus.textContent = "Kod poprawny. Gry odblokowane.";
+				} else {
+					adminStatus.textContent = "Niepoprawny kod. Sprobuj ponownie.";
+				}
+			});
+		}
+
+		updateCountdown();
+		setInterval(updateCountdown, 1000);
+
+		if (noBtn) {
+			noBtn.addEventListener("click", () => {
+				modalSubtitle.textContent = "Hmm... chyba znam odpowiedz 😅";
+				modalNote.textContent = "Sprobuj jeszcze raz i wybierz tak.";
+				questionCard.classList.add("shake");
+				setTimeout(() => questionCard.classList.remove("shake"), 500);
+			});
+		}
+	</script>
+</body>
+</html>
